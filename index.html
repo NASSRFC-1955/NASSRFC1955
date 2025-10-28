@@ -4,70 +4,135 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>بث ناديي</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      background: url('https://i.imgur.com/8z2pXjM.jpg') center/cover no-repeat fixed;
       height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1;
+    }
+    .content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      font-family: 'Cairo', sans-serif;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-      position: relative;
-      overflow: hidden;
     }
-    .bg-image {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
-      opacity: 0.2;
-      z-index: 0;
+    .icon { font-size: 4.5rem; margin-bottom: 20px; }
+    h1 {
+      font-size: 3rem;
+      margin: 20px 0;
+      color: #0f0;
+      text-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
+      animation: glow 2s infinite alternate;
     }
-    .content { position: relative; z-index: 1; }
-    .icon { font-size: 5rem; margin-bottom: 20px; animation: pulse 2s infinite; }
-    h1 { font-size: 2.8rem; margin: 20px 0; color: #00ff88; text-shadow: 0 0 10px rgba(0,255,136,0.5); }
     .btn {
-      background: #9146ff;
+      background: linear-gradient(45deg, #8a2be2, #ff1493);
       color: white;
-      padding: 20px 50px;
-      font-size: 1.8rem;
+      padding: 20px 60px;
+      font-size: 2rem;
       font-weight: bold;
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 10px 25px rgba(145, 70, 255, 0.5);
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.8);
       transition: all 0.3s ease;
       text-decoration: none;
       display: inline-block;
-      margin-top: 30px;
+      margin: 30px 0;
     }
     .btn:hover {
-      transform: translateY(-5px) scale(1.05);
-      background: #7d26cd;
-      box-shadow: 0 15px 30px rgba(145, 70, 255, 0.7);
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(138, 43, 226, 1);
     }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
+    .player-container {
+      width: 100%;
+      height: 100vh;
+      display: none;
+      position: absolute;
+      top: 0; left: 0;
+      z-index: 999;
+    }
+    .player-container.active {
+      display: block;
+    }
+    iframe {
+      width: 100% !important;
+      height: 100% !important;
+      border: none !important;
+    }
+    .back {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(138, 43, 226, 0.9);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      z-index: 9999;
+      display: none;
+    }
+    .back.active {
+      display: block;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #0f0; }
+      to { text-shadow: 0 0 30px #0f0, 0 0 50px #0f0; }
     }
     @media (max-width: 768px) {
       h1 { font-size: 2rem; }
-      .btn { font-size: 1.4rem; padding: 16px 36px; }
-      .icon { font-size: 3.5rem; }
+      .btn { font-size: 1.5rem; padding: 16px 40px; }
     }
   </style>
 </head>
 <body>
-  <div class="bg-image"></div>
-  <div class="content">
+
+  <div class="overlay"></div>
+
+  <!-- الصفحة الرئيسية -->
+  <div class="content" id="home">
     <div class="icon">📺</div>
     <h1>بث ناديي</h1>
-    <a href="stream.html" class="btn">CLICK HERE</a>
+    <button onclick="showStream()" class="btn">CLICK HERE</button>
   </div>
+
+  <!-- صفحة البث (مخفية أولًا) -->
+  <div class="player-container" id="player">
+    <a href="javascript:void(0)" onclick="showHome()" class="back" id="backBtn">← رجوع</a>
+    <iframe
+      src="https://player.twitch.tv/?channel=live123one&parent=nassrfc-1955.github.io&autoplay=true&muted=false"
+      frameborder="0"
+      scrolling="no"
+      allowfullscreen="true">
+    </iframe>
+  </div>
+
+  <script>
+    function showStream() {
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('player').classList.add('active');
+      document.getElementById('backBtn').classList.add('active');
+    }
+    function showHome() {
+      document.getElementById('player').classList.remove('active');
+      document.getElementById('backBtn').classList.remove('active');
+      document.getElementById('home').style.display = 'flex';
+    }
+  </script>
+
 </body>
 </html>
